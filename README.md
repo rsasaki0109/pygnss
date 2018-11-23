@@ -2,6 +2,7 @@
 ## Functions　
 ### Input/output functions　
 - read_rtklibpos:read rtklib .pos file
+- read_rtklibposstat:read rtklib .pos.stat file
   
 ### Coordinates functions
 - xyz2llh:ECEF to Geodetic position
