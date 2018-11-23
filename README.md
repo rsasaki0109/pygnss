@@ -8,3 +8,6 @@
 - xyz2enu:ECEF to ENU position  　　 　
 - llh2xyz:Geodetic to ECEF position  
 - llh2enu:Geodetic to ENU position  
+
+### Positioning models 
+- geodist:Geometric distance
