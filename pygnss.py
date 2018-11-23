@@ -4,10 +4,11 @@ import pandas as pd
 D2R = np.pi/180.0
 R2D = 180.0/np.pi
 
-#inputs:
-#    path:pos file path
-#outputs:
-#    pos(type:ndarray)
+#read rtklib .pos file
+#Inputs:
+#    path: pos file path
+#Outputs: 
+#    pos : ndarray
 def  read_rtklibpos(path):
     df=pd.read_table(path,header=None,sep='\s+',comment='%')
     
@@ -19,8 +20,11 @@ def  read_rtklibpos(path):
     pos=df2.values.astype("float64")
     return pos
 
-#inputs:
-#    xyz:at ecef 
+#ECEF to Geodetic position 
+#Inputs:
+#    xyz: nx3 ecef vector[m] 
+#Outputs:
+#    llh: nx3 llh vector [deg,deg,m]
 def xyz2llh(xyz):
 
     a = 6378137.0000    # earth radius in meters    (WGS84)
@@ -65,9 +69,13 @@ def xyz2llh(xyz):
     llh = np.hstack((lat.T,lon.T,h.T))
     
     return llh
-
-#inputs:
-#    xyz(n x 3)
+    
+#ECEF to ENU position 
+#Inputs:
+#    xyz   : nx3 ecef vector[m] 
+#    orgxyz: 1x3 ecef vector[m] 
+#Outputs:
+#    enu: nx3 enu  vector [m]
 def xyz2enu(xyz,orgxyz):
        n = xyz.shape[0]
        difxyz = xyz-np.tile(orgxyz,(n,1))
@@ -83,7 +91,12 @@ def xyz2enu(xyz,orgxyz):
             [ cosphi*coslam , cosphi*sinlam  ,sinphi]]
        enu = np.dot(R,difxyz.T).T
        return enu   
-
+       
+#Geodetic to ECEF position 
+#Inputs:
+#    llh   : nx3 llh vector [deg,deg,m]
+#Outputs:
+#    xyz   : nx3 ecef vector[m] 
 def llh2xyz(llh):
     
     if len(llh.shape) == 1: # if input is orgllh
@@ -110,7 +123,13 @@ def llh2xyz(llh):
     xyz = np.hstack((x.T,y.T,z.T))
     
     return xyz
-
+    
+#Geodetic to ENU position 
+#Inputs:
+#    xyz   : nx3 ecef vector[m] 
+#Outputs:
+#    llh      : nx3 llh vector [deg,deg,m]
+#    orgllh   : 1x3 llh vector [deg,deg,m]
 def llh2enu(llh,orgllh):
     xyz = llh2xyz(llh)
     orgxyz = llh2xyz(orgllh)
