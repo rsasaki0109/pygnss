@@ -21,6 +21,35 @@ def  read_rtklibpos(path):
     pos=df2.values.astype("float64")
     return pos
 
+#structure for pos.stat file
+class  PosStatus:
+    def __init__(self):
+        NP=9
+        NV=15
+        NC=8
+        self.pos=np.zeros((0,NP))
+        self.vel=np.zeros((0,NV))
+        self.clk=np.zeros((0,NC))
+#read rtklib .pos.stat file
+#Inputs:
+#    path: pos.stat file path
+#Outputs: 
+#    stat : class PosStatus        
+def read_rtklibposstat(path):
+    with open(path,'r') as f:
+        stat=PosStatus()
+        for row in f:
+            if("$POS"==row[:4]):
+                pos=np.array(row[6:].strip('\n').split(","),dtype="float64").reshape(1,-1)
+                stat.pos = np.vstack((stat.pos,pos))
+            if("$VEL"==row[:4]): 
+                vel=np.array(row[9:].strip('\n').split(","),dtype="float64").reshape(1,-1)
+                stat.vel = np.vstack((stat.vel,vel))
+            if("$CLK"==row[:4]):
+                clk=np.array(row[6:].strip('\n').split(","),dtype="float64").reshape(1,-1)
+                stat.clk = np.vstack((stat.clk,clk))
+    return stat
+
 ### Coordinates functions ###
 #ECEF to Geodetic position 
 #Inputs:
