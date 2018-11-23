@@ -1,4 +1,5 @@
 # pygnss　
+pygnss is a gnss analysis library
 ## Functions　
 ### Input/output functions　
 - read_rtklibpos:read rtklib .pos file
