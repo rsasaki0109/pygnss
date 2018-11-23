@@ -4,6 +4,7 @@ import pandas as pd
 D2R = np.pi/180.0
 R2D = 180.0/np.pi
 
+### Input/output functions　###
 #read rtklib .pos file
 #Inputs:
 #    path: pos file path
@@ -20,6 +21,7 @@ def  read_rtklibpos(path):
     pos=df2.values.astype("float64")
     return pos
 
+### Coordinates functions ###
 #ECEF to Geodetic position 
 #Inputs:
 #    xyz: nx3 ecef vector[m] 
@@ -135,3 +137,21 @@ def llh2enu(llh,orgllh):
     orgxyz = llh2xyz(orgllh)
     enu = xyz2enu(xyz,orgxyz)
     return enu
+import numpy as np
+
+### Positioning models ###
+#Geometric distance
+#Inputs:
+#    rs   : nx3 satellite position[m] 
+#    rr   : 1x3 receiver position[m] 
+#Outputs:
+#    d     : 1xn geometric distance [m]
+def geodist(rs,rr):
+    CLIGHT= 299792458.0
+    OMGE  = 7.2921151467E-5
+    n =rs.shape[0]
+    difr = rs-np.tile(rr,(n,1))
+    r = np.sqrt(np.sum(difr**2,axis=1))
+    
+    d = r+OMGE*(rs[:,0]*rr[1]-rs[:,1]*rr[0])/CLIGHT
+    return d.reshape(1,-1)
