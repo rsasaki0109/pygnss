@@ -1,22 +1,26 @@
-import math
 import numpy as np
 import pandas as pd
+
 D2R = np.pi/180.0
 R2D = 180.0/np.pi
+
+#inputs:
+#    path:pos file path
 #outputs:
 #    pos(type:ndarray)
 def  read_rtklibpos(path):
     df=pd.read_table(path,header=None,sep='\s+',comment='%')
     
     hms=df.iloc[:,1].str.split(":")
-    t=[float(hms.iloc[i][0])*60**2+float(hms.iloc[i][1])*60+float(hms.iloc[i][2]) for i, unused_list in enumerate(hms)]
+    sec=[float(hms.iloc[i][0])*60**2+float(hms.iloc[i][1])*60+float(hms.iloc[i][2]) for i, unused_list in enumerate(hms)]
 
-    df2=pd.concat([df.iloc[:,0].str.replace("/", ""),pd.Series(t), df.iloc[:,2:]], axis=1)
+    df2=pd.concat([df.iloc[:,0].str.split("/",expand=True),pd.Series(sec), df.iloc[:,2:]], axis=1)
 
     pos=df2.values.astype("float64")
     return pos
 
-
+#inputs:
+#    xyz:at ecef 
 def xyz2llh(xyz):
 
     a = 6378137.0000    # earth radius in meters    (WGS84)
@@ -61,7 +65,6 @@ def xyz2llh(xyz):
     llh = np.hstack((lat.T,lon.T,h.T))
     
     return llh
-
 
 #inputs:
 #    xyz(n x 3)
